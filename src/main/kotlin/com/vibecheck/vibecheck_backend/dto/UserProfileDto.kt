@@ -5,5 +5,6 @@ data class UserProfileDto(
     val email: String?, // Kasih tanda tanya (?) karena email Firebase kadang bisa null
     val username: String?, // <-- Ini yang bikin error tadi
     val isPremium: Boolean,
-    val role: String
+    val role: String,
+    val photoUrl: String? = null // <-- Tambahan field ini
 )

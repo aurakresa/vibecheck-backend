@@ -9,4 +9,5 @@ interface AuthService {
     fun getUserProfile(firebaseUid: String): UserProfileDto
     fun updateUsername(firebaseUid: String, newUsername: String): UserProfileDto
     fun updatePassword(firebaseUid: String, newPassword: String)
+    fun updateProfilePhoto(firebaseUid: String, photoUrl: String): UserProfileDto
 }

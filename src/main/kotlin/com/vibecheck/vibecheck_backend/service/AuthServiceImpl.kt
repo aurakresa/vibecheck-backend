@@ -11,23 +11,20 @@ import org.springframework.stereotype.Service
 class AuthServiceImpl : AuthService {
 
     override fun registerUser(request: RegisterRequest): UserProfileDto {
-        // 1. Siapkan data untuk Firebase
         val createRequest = UserRecord.CreateRequest()
             .setEmail(request.email)
             .setPassword(request.password)
             .setDisplayName(request.username)
 
-        // 2. Buat user di Firebase
         val userRecord = FirebaseAuth.getInstance().createUser(createRequest)
-
-        // TODO: Jika kamu pakai database PostgreSQL, simpan data user ke DB di sini pakai userRecord.uid
 
         return UserProfileDto(
             firebaseUid = userRecord.uid,
             email = userRecord.email,
             username = userRecord.displayName,
             isPremium = false,
-            role = "GUEST"
+            role = "GUEST",
+            photoUrl = userRecord.photoUrl
         )
     }
 
@@ -38,24 +35,23 @@ class AuthServiceImpl : AuthService {
             email = userRecord.email,
             username = userRecord.displayName ?: "PLAYER_UNKNOWN",
             isPremium = true,
-            role = "HOST_PREMIUM"
+            role = "HOST_PREMIUM",
+            photoUrl = userRecord.photoUrl
         )
     }
 
     override fun updateUsername(firebaseUid: String, newUsername: String): UserProfileDto {
-        // 1. Update ke Firebase
         val updateRequest = UserRecord.UpdateRequest(firebaseUid)
             .setDisplayName(newUsername)
         val userRecord = FirebaseAuth.getInstance().updateUser(updateRequest)
-
-        // TODO: Update juga ke tabel PostgreSQL kamu jika ada
 
         return UserProfileDto(
             firebaseUid = userRecord.uid,
             email = userRecord.email,
             username = userRecord.displayName,
             isPremium = true,
-            role = "HOST_PREMIUM"
+            role = "HOST_PREMIUM",
+            photoUrl = userRecord.photoUrl
         )
     }
 
@@ -63,11 +59,25 @@ class AuthServiceImpl : AuthService {
         val updateRequest = UserRecord.UpdateRequest(firebaseUid)
             .setPassword(newPassword)
 
-        // Update password di Firebase Auth
         FirebaseAuth.getInstance().updateUser(updateRequest)
     }
 
-    // Helper method
+    override fun updateProfilePhoto(firebaseUid: String, photoUrl: String): UserProfileDto {
+        val updateRequest = UserRecord.UpdateRequest(firebaseUid)
+            .setPhotoUrl(photoUrl)
+
+        val userRecord = FirebaseAuth.getInstance().updateUser(updateRequest)
+
+        return UserProfileDto(
+            firebaseUid = userRecord.uid,
+            email = userRecord.email,
+            username = userRecord.displayName,
+            isPremium = true,
+            role = "HOST_PREMIUM",
+            photoUrl = userRecord.photoUrl
+        )
+    }
+
     private fun fetchFirebaseUser(uid: String): UserRecord {
         try {
             return FirebaseAuth.getInstance().getUser(uid)

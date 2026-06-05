@@ -3,6 +3,7 @@ package com.vibecheck.vibecheck_backend.controller
 import com.vibecheck.vibecheck_backend.dto.ApiResponse
 import com.vibecheck.vibecheck_backend.dto.RegisterRequest
 import com.vibecheck.vibecheck_backend.dto.UpdatePasswordRequest
+import com.vibecheck.vibecheck_backend.dto.UpdatePhotoRequest
 import com.vibecheck.vibecheck_backend.dto.UpdateUsernameRequest
 import com.vibecheck.vibecheck_backend.dto.UserProfileDto
 import com.vibecheck.vibecheck_backend.service.AuthService
@@ -48,6 +49,14 @@ class AuthController(
         authService.updatePassword(uid, request.newPassword)
         // Jika hanya mengubah data tanpa perlu mengembalikan objek, data diisi null
         return ResponseEntity.ok(ApiResponse.success(null, "Password berhasil diubah"))
+    }
+
+    @PutMapping("/photo")
+    fun updateProfilePhoto(@Valid @RequestBody request: UpdatePhotoRequest): ResponseEntity<ApiResponse<UserProfileDto>> {
+        val uid = getUidFromContext()
+        // Panggil fungsi di AuthService (yang harus Anda buat setelah ini)
+        val updatedProfile = authService.updateProfilePhoto(uid, request.photoUrl)
+        return ResponseEntity.ok(ApiResponse.success(updatedProfile, "Foto profil berhasil diperbarui"))
     }
 
     // Helper untuk mengambil UID dari SecurityContext (yang diset oleh FirebaseTokenFilter)

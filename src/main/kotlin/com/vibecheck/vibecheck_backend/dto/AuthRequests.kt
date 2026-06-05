@@ -26,3 +26,8 @@ data class UpdatePasswordRequest(
     @field:Size(min = 6, message = "Password minimal 6 karakter")
     val newPassword: String
 )
+
+data class UpdatePhotoRequest(
+    @field:NotBlank(message = "URL foto tidak boleh kosong")
+    val photoUrl: String
+)
